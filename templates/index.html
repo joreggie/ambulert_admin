@@ -1,0 +1,31 @@
+{% extends "app.html" %}
+
+{% block content%}
+    <h1>Hospital Sign up</h1>
+
+    {% if request.args.get('message') %}
+        <div class="alert alert-success">
+            {{ request.args.get('message') }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Hospital name" id="hospital_name" />
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Address" id="hospital_address" />
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Contact Number" id="hospital_contact" />
+        </div>
+        <div class="form-group">
+           <select name="" id="hospital_type" class="form-control">
+               <option disabled selected>Hospital Type</option>
+               <option value="public">Public</option>
+               <option value="private">Private</option>
+           </select>
+        </div>
+        <input type="submit" class="btn btn-primary" id="btn_hospital_signup">
+    </form>
+{% endblock %}

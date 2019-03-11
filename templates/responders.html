@@ -1,0 +1,58 @@
+{% extends 'app.html' %}
+
+{% block content %}
+<div class="main">
+	
+	<div class="main-inner">
+
+	    <div class="container">
+	
+	      
+			<div class="row">
+	      	
+				<div class="span12">
+					
+					<div class="widget">
+						  
+					  <div class="widget-header">
+						  <i class="icon-group"></i>
+						  <h3>Responders</h3>
+					  </div> <!-- /widget-header -->
+					  
+					  <div class="widget-content">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Firstname</th>
+										<th>Lastname</th>
+										<th>Middlename</th>
+										<th>Email</th>
+										<th>Password</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>1</td>
+										<td>Joanna</td>
+										<td>Pasa</td>
+										<td>Mendoza</td>
+										<th>joan@gmail.com</th>
+										<th>123</th>
+										<td><button class='btn btn-primary'>Edit</button><button class='btn btn-danger'>Delete</button></td>
+									</tr>
+								</tbody>
+							</table>
+					  </div> <!-- /widget-content -->
+						  
+				  </div> <!-- /widget -->
+				</div><!-- span12 -->
+			</div> <!-- /row -->
+	    </div> <!-- /container -->
+    
+	</div> <!-- /main-inner -->
+	    
+</div> <!-- /main -->
+
+{% endblock %}

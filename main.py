@@ -5,23 +5,18 @@ from models.hospital import Hospital
 app = Flask(__name__)
 
 @app.route("/",methods=["GET","POST"])
+@app.route("/dashboard",methods=["GET","POST"])
 def index():
-    if request.method=="POST":
-        data = request.get_json(force=True)
-        
-        hospital = Hospital.addHospital(
-            hospital_name=data["hospital_name"],
-            hospital_address=data["hospital_address"],
-            hospital_contact=data["hospital_contact"],
-            hospital_type=data["hospital_type"])
-
-        if hospital:
-            return json_response({
-                "message" : "Successfuully signed up!"  
-            })
-        else:
-            return json_response({
-                "message" : "Sign up failed!"
-            })
-
     return render_template("index.html")
+
+@app.route("/reports",methods=["GET","POST"])
+def reports():
+    return render_template("reports.html")
+
+@app.route("/responders",methods=["GET","POST"])
+def responders():
+    return render_template("responders.html")
+
+@app.route("/users",methods=["GET","POST"])
+def users():
+    return render_template("users.html")

@@ -20,3 +20,7 @@ def responders():
 @app.route("/users",methods=["GET","POST"])
 def users():
     return render_template("users.html")
+
+@app.route("/settings",methods=["GET","POST"])
+def settings():
+    return render_template("settings.html")

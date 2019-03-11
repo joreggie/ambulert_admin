@@ -18,7 +18,7 @@
     <![endif]-->
 </head>
 <body>
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top text-center">
   <div class="navbar-inner">
     <div class="container"> <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span
                     class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </a><a class="brand" href="index.html">Ambulert</a>
@@ -27,8 +27,8 @@
           <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="padding">Account name</span><i
                             class="icon-cog"></i><b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="javascript:;">Settings</a></li>
-              <li><a href="javascript:;">Log out</a></li>
+              <li class="white"><a href="/settings">Settings</a></li>
+              <li><a href="">Log out</a></li>
             </ul>
           </li>
         </ul>
@@ -46,15 +46,10 @@
     <div class="subnavbar-inner">
       <div class="container">
         <ul class="mainnav">
-          <li class="active"><a href="/dashboard"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
-          <li><a href="/reports"><i class="icon-file"></i><span>Reports</span> </a> </li>
-          <li><a href="/responders"><i class="icon-group"></i><span>Responders</span> </a></li>
-          <li><a href="/users"><i class="icon-user"></i><span>Users</span> </a> </li>
-            <ul class="dropdown-menu">
-              <li><a href="icons.html">Responders</a></li>
-              <li><a href="faq.html">Users</a></li>
-            </ul>
-          </li>
+          <li class="{{ 'active' if active_page == 'dashboard' else '' }}"><a href="/dashboard"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
+          <li class="{{ 'active' if active_page == 'reports' else '' }}"><a href="/reports"><i class="icon-file"></i><span>Reports</span> </a> </li>
+          <li class="{{ 'active' if active_page == 'responders' else '' }}"><a href="/responders"><i class="icon-group"></i><span>Responders</span> </a></li>
+          <li class="{{ 'active' if active_page == 'users' else '' }}"><a href="/users"><i class="icon-user"></i><span>Users</span> </a> </li>
         </ul>
       </div>
       <!-- /container --> 
@@ -65,20 +60,6 @@
 {% block content %}
 {% endblock %}
 
-<div class="footer">
-    <div class="footer-inner">
-      <div class="container">
-        <div class="row">
-          <div class="span12"> &copy; 2013 <a href="#">Bootstrap Responsive Admin Template</a>. </div>
-          <!-- /span12 --> 
-        </div>
-        <!-- /row --> 
-      </div>
-      <!-- /container --> 
-    </div>
-    <!-- /footer-inner --> 
-  </div>
-<!-- /footer --> 
 <!-- Le javascript
 ================================================== --> 
 <!-- Placed at the end of the document so the pages load faster --> 

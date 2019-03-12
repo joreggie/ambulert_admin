@@ -1,26 +1,97 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,session,url_for,redirect
 from functions import json_response
 from models.hospital import Hospital
+from decorators import login_required
 
 app = Flask(__name__)
+app.secret_key = "dgkj4urf989398011k2pjd"
 
 @app.route("/",methods=["GET","POST"])
 @app.route("/dashboard",methods=["GET","POST"])
+@login_required
 def index():
-    return render_template("index.html")
+    return render_template("index.html",title="Dashboard")
 
 @app.route("/reports",methods=["GET","POST"])
+@login_required
 def reports():
-    return render_template("reports.html")
+    return render_template("reports.html",title="Reports")
 
 @app.route("/responders",methods=["GET","POST"])
+@login_required
 def responders():
-    return render_template("responders.html")
+    return render_template("responders.html",title="Responders")
 
 @app.route("/users",methods=["GET","POST"])
+@login_required
 def users():
-    return render_template("users.html")
+    return render_template("users.html",title="Users")
 
 @app.route("/settings",methods=["GET","POST"])
+@login_required
 def settings():
-    return render_template("settings.html")
+    return render_template("settings.html",title="Settings")
+
+@app.route("/signin",methods=["GET","POST"])
+def signin():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "hospital_email" in data:
+            hospital_email = data["hospital_email"]
+        if "hospital_password" in data:
+            hospital_password = data["hospital_password"]
+
+        hospital = Hospital.signinHospital(hospital_email=hospital_email,hospital_password=hospital_password)
+        if hospital:
+            session['admin'] = hospital.key.id()
+            return json_response({
+                "signin": "success",
+                "message" : "Sign in Success"
+                })
+        else:
+            return json_response({
+                "signin" : "failed",
+                "message" : "Sign in failed"
+                })
+    return render_template("signin.html",title="Sign in")
+
+@app.route("/signup",methods=["GET","POST"])
+def signup():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "hospital_name" in data:
+            hospital_name = data["hospital_name"]
+        if "hospital_address" in data:
+            hospital_address = data["hospital_address"]
+        if "hospital_email" in data:
+            hospital_email = data["hospital_email"]
+        if "hospital_contact" in data:
+            hospital_contact = data["hospital_contact"]
+        if "hospital_password" in data:
+            hospital_password = data["hospital_password"]
+        if "hospital_type" in data:
+            hospital_type = data["hospital_type"]
+
+        hospital = Hospital.addHospital(hospital_name=hospital_name,hospital_address=hospital_address,hospital_email=hospital_email,hospital_contact=hospital_contact,hospital_password=hospital_password,hospital_type=hospital_type)
+
+        if hospital:
+            return json_response({
+                "signup" : "success",
+                "message":"Successfully signed up"
+                })
+        else:
+            return json_response({
+                "signup" : "failed",
+                "message":"Failed to sign up"
+                })
+            
+    return render_template("signup.html",title="Sign up")
+
+@app.route('/signout')
+def signout():
+    del session['admin']
+    return redirect(url_for('signin'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html'), 404

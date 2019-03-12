@@ -23,7 +23,6 @@ select,
 textarea {
   font-family: 'Open Sans';
 }
-
 .dropdown .dropdown-menu {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
@@ -1099,7 +1098,7 @@ width: 11px;}
 	height: 250px;
 }
 
-.dropdown-menu li>a:hover, .dropdown-menu .active>a, .dropdown-menu .active>a:hover { background:#00ba8b;}
+.dropdown-menu li>a:hover, .dropdown-menu .active>a, .dropdown-menu .active>a:hover { background:#ff5252;}
 
 .accordion-heading { background:#e5e5e5;  }
 .accordion-heading a { color:#545454; text-decoration:none; font-weight:bold; }
@@ -1284,7 +1283,13 @@ color: #333;
 
 /* Custom CSS */
 .padding{
-	padding:5px;
+	padding:7px;
+}
+button{
+	margin:5px;
+}
+.list-none{
+	list-style-type: none;
 }
 
 

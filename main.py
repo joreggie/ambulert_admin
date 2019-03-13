@@ -1,10 +1,13 @@
 from flask import Flask,render_template,request,session,url_for,redirect
 from functions import json_response
 from models.hospital import Hospital
+from models.user import User
 from decorators import login_required
 
 app = Flask(__name__)
 app.secret_key = "dgkj4urf989398011k2pjd"
+
+# for admin website
 
 @app.route("/",methods=["GET","POST"])
 @app.route("/dashboard",methods=["GET","POST"])
@@ -91,6 +94,59 @@ def signup():
 def signout():
     del session['admin']
     return redirect(url_for('signin'))
+
+#for mobile user 
+
+@app.route("/signup/user",methods=["GET","POST"])
+def signup_user():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "user_firstname" in data:
+            user_firstname = data["user_firstname"]
+        if "user_middlename" in data:
+            user_middlename = data["user_middlename"]
+        if "user_lastname" in data:
+            user_lastname = data["user_lastname"]
+        if "user_email" in data:
+            user_email = data["user_email"]
+        if "user_password" in data:
+            user_password = data["user_password"]
+
+        user = User.addUser(user_firstname=user_firstname,user_middlename=user_middlename,user_lastname=user_lastname,user_email=user_email,user_password=user_password)
+
+        if user:
+            return json_response({
+                "signup" : "success",
+                "message":"Successfully signed up"
+                })
+        else:
+            return json_response({
+                "signup" : "failed",
+                "message":"Failed to sign up"
+                })
+
+@app.route("/signin/user",methods=["GET","POST"])
+def signin_user():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "user_email" in data:
+            user_email = data["user_email"]
+        if "user_password" in data:
+            user_password = data["user_password"]
+
+        user = User.signinUser(user_email=user_email,user_password=user_password)
+        if user:
+            return json_response({
+                "signin": "success",
+                "message" : "Sign in Success"
+                })                  
+        else:
+            return json_response({
+                "signin" : "failed",
+                "message" : "Sign in failed"
+                })
+
+#for errors on admin website
 
 @app.errorhandler(404)
 def page_not_found(e):

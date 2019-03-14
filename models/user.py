@@ -15,7 +15,7 @@ class User(ndb.Model):
         user = cls()
 
         if user_firstname:
-            user.user_name = user_firstname
+            user.user_firstname = user_firstname
         if user_middlename:
             user.user_middlename = user_middlename
         if user_lastname:

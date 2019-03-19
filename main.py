@@ -5,7 +5,12 @@ from models.user import User
 from decorators import login_required
 import pusher
 
+# 
+import requests
+from requests_toolbelt.adapters import appengine
+
 app = Flask(__name__)
+appengine.monkeypatch()
 app.secret_key = "dgkj4urf989398011k2pjd"
 
 # for admin website
@@ -22,6 +27,11 @@ pusher_client = pusher.Pusher(
 @app.route("/dashboard",methods=["GET","POST"])
 @login_required
 def index():
+    pusher_client.trigger('hospital_channel', 'alert_event', 
+            {'emergencyType': "Accident",
+            'emergencyLocation' : "Mambaling Cebu City",
+            'others': "3 people"
+            })
     return render_template("index.html",title="Dashboard")
 
 @app.route("/reports",methods=["GET","POST"])
@@ -105,23 +115,6 @@ def signout():
     return redirect(url_for('signin'))
 
 #for mobile user 
-
-@app.route("/alert",methods=["POST"])
-def alert():
-    if request.method == 'POST':
-        data = request.get_json(force=True)
-        if 'emergencyLocation' in data:
-            emergencyLocation = data['emergencyLocation']
-        if 'emergencyType' in data:
-            emergencyType = data['emergencyType']
-        if 'others' in data:
-            others = data['others']
-
-        pusher_client.trigger('hospital', 'alert', 
-            {'emergencyType': emergencyType,
-            'emergencyLocation' : emergencyLocation,
-            'others':others
-            })
 
 @app.route("/signup/user",methods=["GET","POST"])
 def signup_user():

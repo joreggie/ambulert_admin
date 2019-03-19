@@ -3,11 +3,20 @@ from functions import json_response
 from models.hospital import Hospital
 from models.user import User
 from decorators import login_required
+import pusher
 
 app = Flask(__name__)
 app.secret_key = "dgkj4urf989398011k2pjd"
 
 # for admin website
+
+pusher_client = pusher.Pusher(
+  app_id='739264',
+  key='f6f266841f565e4e7b21',
+  secret='0d596bb7dafc11fdeaa5',
+  cluster='ap1',
+  ssl=True
+)
 
 @app.route("/",methods=["GET","POST"])
 @app.route("/dashboard",methods=["GET","POST"])
@@ -96,6 +105,23 @@ def signout():
     return redirect(url_for('signin'))
 
 #for mobile user 
+
+@app.route("/alert",methods=["POST"])
+def alert():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if 'emergencyLocation' in data:
+            emergencyLocation = data['emergencyLocation']
+        if 'emergencyType' in data:
+            emergencyType = data['emergencyType']
+        if 'others' in data:
+            others = data['others']
+
+        pusher_client.trigger('hospital', 'alert', 
+            {'emergencyType': emergencyType,
+            'emergencyLocation' : emergencyLocation,
+            'others':others
+            })
 
 @app.route("/signup/user",methods=["GET","POST"])
 def signup_user():

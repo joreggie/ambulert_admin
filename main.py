@@ -2,6 +2,7 @@ from flask import Flask,render_template,request,session,url_for,redirect
 from functions import json_response
 from models.hospital import Hospital
 from models.user import User
+from models.responder import Responder
 from decorators import login_required
 import pusher
 
@@ -42,6 +43,27 @@ def reports():
 @app.route("/responders",methods=["GET","POST"])
 @login_required
 def responders():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "responder_firstname" in data:
+            responder_firstname = data["responder_firstname"]
+        if "responder_middlename" in data:
+            responder_middlename = data["responder_middlename"]
+        if "responder_lastname" in data:
+            responder_lastname = data["responder_lastname"]    
+
+        responder = Responder.addResponder(responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+
+        if responder:
+            return json_response({
+                "add" : "success",
+                "message":"Successfully added responder"
+                })
+        else:
+            return json_response({
+                "add" : "failed",
+                "message":"Failed to add responder"
+                })
     return render_template("responders.html",title="Responders")
 
 @app.route("/users",methods=["GET","POST"])

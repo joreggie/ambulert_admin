@@ -18,7 +18,56 @@
 					  <div class="widget-header">
 						  <i class="icon-group"></i>
 							<h3>Responders</h3>
-							<img src="/static/img/add.png" alt="add responders" class="pull-right padding">
+									<a href="#myModal" data-toggle="modal">
+											<img src="/static/img/add.png" alt="add responders" class="pull-right padding">
+									</a>
+							<!-- Modal -->
+							<div id="myModal" class="modal fade" role="dialog">
+									<div class="modal-dialog">
+								
+										<!-- Modal content-->
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">&times;</button>
+												<h3 class="modal-title" >
+														Add Responder
+											</h3>
+											</div>
+											<div class="modal-body">
+												{% if request.args.get("all_fields")=="required" %}
+													<div class="alert alert-danger">
+														<p>All fields are <strong>required</strong></p>
+													</div>
+												{% elif request.args.get("add")=="success" %}
+													<div class="alert alert-success">
+														<p>{{request.args.get("message")}}</strong></p>
+													</div>
+												{% elif request.args.get("add")=="failed" %}
+													<div class="alert alert-danger">
+														<p>{{request.args.get("message")}}</strong></p>
+													</div>
+												{% endif %}
+												<form method="POST">
+													<div class="form-group">
+														<input type="text" class="form-control" placeholder="Firstname" id="responder_firstname">
+													</div>
+													<div class="form-group">
+															<input type="text" class="form-control" placeholder="Middlename" id="responder_middlename">
+													</div>
+													<div class="form-group">
+															<input type="text" class="form-control" placeholder="Lastname" id="responder_lastname">
+														</div>
+														<button id="btnAddResponder" class="btn btn-primary pull-right">Add</button>
+												</form>
+											</div>
+											<div class="modal-footer">
+											</div>
+										</div>
+								
+									</div>
+								</div>
+
+							
 					  </div> <!-- /widget-header -->
 					  
 					  <div class="widget-content">
@@ -27,10 +76,8 @@
 									<tr>
 										<th>ID</th>
 										<th>Firstname</th>
-										<th>Lastname</th>
 										<th>Middlename</th>
-										<th>Email</th>
-										<th>Password</th>
+										<th>Lastname</th>
 										<th>Action</th>
 									</tr>
 								</thead>
@@ -38,10 +85,8 @@
 									<tr>
 										<td>1</td>
 										<td>Joanna</td>
-										<td>Pasa</td>
 										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
+										<td>Pasa</td>
 										<td><button class='btn btn-primary'>Edit</button><button class='btn btn-danger'>Delete</button></td>
 									</tr>
 								</tbody>

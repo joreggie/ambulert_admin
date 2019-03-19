@@ -1,6 +1,7 @@
 $(document).ready(function(){
     var sendInfo={};
 
+    //Hospital Sign Up
     $("#btnSignUp").click(function(e){
         var name = $("#hospital_name").val();
         var address = $("#hospital_address").val();
@@ -32,7 +33,7 @@ $(document).ready(function(){
         }
         e.preventDefault();
     });
-
+    //Hospital Sign In
     $("#btnSignIn").click(function(e){
         var email = $("#hospital_email").val();
         var password = $("#hospital_password").val();
@@ -50,6 +51,27 @@ $(document).ready(function(){
             }
         });
         
+        e.preventDefault();
+    });
+    //Add Responder
+    $("#btnAddResponder").click(function(e){
+        var firstname = $("#responder_firstname").val();
+        var middlename = $("#responder_middlename").val();
+        var lastname = $("#responder_lastname").val();
+
+        addInfo={
+            responder_firstname : firstname,
+            responder_middlename : middlename,
+            responder_lastname : lastname,
+        };
+
+        if(firstname != "" && middlename != "" && lastname != ""){
+             $.post("/responders",JSON.stringify(addInfo),function(response){
+                window.location.replace("/responders?add="+response["add"]+"&message="+response["message"]);
+            });
+        }else{
+            window.location.replace("/responders?all_fields=required");
+        }
         e.preventDefault();
     });
 

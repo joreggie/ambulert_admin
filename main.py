@@ -3,6 +3,7 @@ from functions import json_response
 from models.hospital import Hospital
 from models.user import User
 from models.responder import Responder
+from models.report import Report
 from decorators import login_required
 import pusher
 
@@ -28,11 +29,6 @@ pusher_client = pusher.Pusher(
 @app.route("/dashboard",methods=["GET","POST"])
 @login_required
 def index():
-    pusher_client.trigger('hospital_channel', 'alert_event', 
-            {'emergencyType': "Accident",
-            'emergencyLocation' : "Mambaling Cebu City",
-            'others': "3 people"
-            })
     return render_template("index.html",title="Dashboard")
 
 @app.route("/reports",methods=["GET","POST"])
@@ -51,8 +47,8 @@ def responders():
             responder_middlename = data["responder_middlename"]
         if "responder_lastname" in data:
             responder_lastname = data["responder_lastname"]    
-
-        responder = Responder.addResponder(responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+        hospital = Hospital.get_by_id(int(session("admin")))
+        responder = Responder.addResponder(hospital=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
 
         if responder:
             return json_response({
@@ -63,8 +59,17 @@ def responders():
             return json_response({
                 "add" : "failed",
                 "message":"Failed to add responder"
-                })
-    return render_template("responders.html",title="Responders")
+                })  
+    hosp = Hospital.get_by_id(int(session("admin")))
+    responders = Responder.query(Responder.hospital == hosp.key).order(-Responder.created).fetch()
+    if responders != None:
+        responder_dict = []
+        for responder in responders:
+            responder_dict.append(responder.to_dict())
+    else:
+        responder_dict="Empty"
+
+    return render_template("responders.html",title="Responders",responders=responder_dict)
 
 @app.route("/users",methods=["GET","POST"])
 @login_required
@@ -137,6 +142,37 @@ def signout():
     return redirect(url_for('signin'))
 
 #for mobile user 
+
+@app.route("/alert",methods=["GET","POST"])
+def alert():
+    if request.method=='POST':
+        data=request.get_json(force=True)
+        if "location" in data:
+            report_location =data["location"]
+        if "emergencyType" in data:
+            report_type =data["emergencyType"]
+        if "others" in data:
+            report_others =data["others"]
+
+        report = Report.addReport(report_location=location,report_type=emergencyType,report_others=others)
+
+        if report:
+            return json_response({
+                "add_report" : "success",
+                "message":"Successfully sent report you can now await for hospitals to respond"
+                })
+        else:
+            return json_response({
+                "add_report" : "failed",
+                "message":"Failed to send report"
+                })
+
+    pusher_client.trigger("hospital_channel","alert_event",
+            {
+                "emergencyLocation": "Mambaling CC",
+                "emergencyType": "Accident"
+            }
+        )
 
 @app.route("/signup/user",methods=["GET","POST"])
 def signup_user():

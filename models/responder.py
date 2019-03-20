@@ -1,6 +1,8 @@
 from google.appengine.ext import ndb
+from models.hospital import Hospital
 
 class Responder(ndb.Model):
+    hospital = ndb.KeyProperty(kind=Hospital)
     responder_firstname = ndb.StringProperty()
     responder_middlename = ndb.StringProperty()
     responder_lastname = ndb.StringProperty()
@@ -8,10 +10,15 @@ class Responder(ndb.Model):
     updated = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
-    def addResponder(cls,responder_firstname,responder_middlename,responder_lastname):
+    def addResponder(cls,hospital_id,responder_firstname,responder_middlename,responder_lastname):
             
         responder = cls()
 
+        hospital_id = str(kwargs.get('hospital_id'))
+        if hospital_id.isdigit():
+            hospital_key = ndb.Key('Hospital',int(hospital_id))
+            responder.hospital = hospital_key
+        
         if responder_firstname:
             responder.responder_firstname = responder_firstname
         if responder_middlename:
@@ -20,4 +27,13 @@ class Responder(ndb.Model):
             responder.responder_lastname = responder_lastname
     
         responder.put()
-        return responder   
+        return responder
+
+    def to_dict(self):
+        data = {}
+
+        data['responder_firstname'] = self.responder_firstname
+        data['responder_middlename'] = self.responder_middlename
+        data['responder_lastname'] = self.responder_lastname
+        data['created'] = self.created.isoformat() + 'Z'
+        return data

@@ -1,3 +1,20 @@
+ // Enable pusher logging - don't include this in production
+    //  Pusher.logToConsole = true;
+
+     var pusher = new Pusher('f6f266841f565e4e7b21', {
+       cluster: 'ap1',
+       forceTLS: true
+     });
+ 
+     var channel = pusher.subscribe('hospital_channel');
+     channel.bind('alert_event', function(data) {
+       alert(JSON.stringify(data));
+
+       $('#location').text(data.emergencyLocation);
+       $('#emergency_type').text(data.emergencyType);
+       $('#reportModal').show();
+     });
+
 $(document).ready(function(){
     var sendInfo={};
 
@@ -59,18 +76,40 @@ $(document).ready(function(){
         var middlename = $("#responder_middlename").val();
         var lastname = $("#responder_lastname").val();
 
-        addInfo={
+        sendInfo={
             responder_firstname : firstname,
             responder_middlename : middlename,
             responder_lastname : lastname,
         };
 
         if(firstname != "" && middlename != "" && lastname != ""){
-             $.post("/responders",JSON.stringify(addInfo),function(response){
+             $.post("/responders",JSON.stringify(sendInfo),function(response){
                 window.location.replace("/responders?add="+response["add"]+"&message="+response["message"]);
             });
         }else{
             window.location.replace("/responders?all_fields=required");
+        }
+        e.preventDefault();
+    });
+
+    //Add Report
+    $("#btnSubmitReport").click(function(e){
+        var location = $("#report_location").val();
+        var type= $("#report_type").val();
+        var others = $("#report_others").val();
+
+        sendInfo={
+            report_location : location,
+            report_type : type,
+            report_others : others,
+        };
+
+        if(location != "" && type != "" && others != ""){
+             $.post("/alert",JSON.stringify(sendInfo),function(response){
+                window.location.replace("/reports?="+response["add_report"]+"&message="+response["message"]);
+            });
+        }else{
+            window.location.replace("/reports?all_fields=required");
         }
         e.preventDefault();
     });

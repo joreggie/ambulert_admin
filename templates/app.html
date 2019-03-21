@@ -61,21 +61,28 @@
     </div>
     <!-- /subnavbar-inner --> 
   </div>
-  <!-- Modal -->
-							<div id="reportModal" class="modal fade" role="dialog">
+  <!-- Modal -->  
+                <div  id="reportModal" class="modal fade" role="dialog">
 									<div class="modal-dialog">
 								
 										<!-- Modal content-->
 										<div class="modal-content">
 											<div class="modal-header">
 												<button type="button" class="close" data-dismiss="modal">&times;</button>
+												<h3 class="modal-title" >
+														New Patient
+											</h3>
 											</div>
 											<div class="modal-body">
-                        <p>There is a patient awaiting your assitance at <span id="location"></span> with the emergency type of <span id="emergency_type"></span>
+												<p>There is a patient awaiting your assitance at <span id="location"></span> with the emergency type of <span id="emergency_type"></span>
                         </p>
-
                         <p id="time"></p>
                         <p id="date"></p>
+											</div>
+											<div class="modal-footer">
+                          <a href="/reports" class="btn btn-primary">
+                              Respond
+                          </a>
 											</div>
 										</div>
 								

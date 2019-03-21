@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+from passlib.hash import pbkdf2_sha256
 
 class Hospital(ndb.Model):
     hospital_name = ndb.StringProperty()
@@ -24,7 +25,7 @@ class Hospital(ndb.Model):
         if hospital_contact:
             hospital.hospital_contact = hospital_contact
         if hospital_password:
-            hospital.hospital_password = hospital_password   
+            hospital.hospital_password = pbkdf2_sha256.hash(hospital_password)
         if hospital_type:
             hospital.hospital_type = hospital_type
 
@@ -36,9 +37,20 @@ class Hospital(ndb.Model):
         admin = None
 
         if hospital_email and hospital_password:
-            admin = cls.query(cls.hospital_email == hospital_email, cls.hospital_password == hospital_password).get()
-        
-        if admin == None:
-            admin == None
+            admin = cls.query(cls.hospital_email == hospital_email, cls.hospital_password != None).get()
+
+        if admin and not pbkdf2_sha256.verify(hospital_password, admin.hospital_password):
+            admin = NoneS
 
         return admin
+
+    def to_dict(self):
+        data = {}
+        
+        data['hospital_name'] = self.hospital_name
+        data['hospital_address'] = self.hospital_address
+        data['hospital_email'] = self.hospital_email
+        data['hospital_contact'] = self.hospital_contact
+        data['hospital_type'] = self.hospital_type
+        data['created'] = self.created.isoformat() + 'Z'
+        return data

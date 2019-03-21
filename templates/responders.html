@@ -68,8 +68,7 @@
 								</div>
 
 							
-					  </div> <!-- /widget-header -->
-					  
+						</div> <!-- /widget-header -->
 					  <div class="widget-content">
 							<table class="table table-striped">
 								<thead>
@@ -81,14 +80,23 @@
 										<th>Action</th>
 									</tr>
 								</thead>
+								
 								<tbody>
+									{% if responders %}
+										{% for r in responders %}
+											<tr>
+												<td>{{ r.id }}</td>
+												<td>{{ r.responder_firstname }}</td>
+												<td>{{ r.responder_middlename }}</td>
+												<td>{{ r.responder_lastname }}</td>
+												<td></td>
+											</tr>
+										{% endfor %}
+									{% else %}
 									<tr>
-										<td>1</td>
-										<td>Joanna</td>
-										<td>Mendoza</td>
-										<td>Pasa</td>
-										<td><button class='btn btn-primary'>Edit</button><button class='btn btn-danger'>Delete</button></td>
+										<td colspan="5"><p>No responder found</p></td>
 									</tr>
+									{% endif %}
 								</tbody>
 							</table>
 					  </div> <!-- /widget-content -->

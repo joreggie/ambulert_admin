@@ -39,6 +39,16 @@ def reports():
 @app.route("/responders",methods=["GET","POST"])
 @login_required
 def responders():
+
+    hospital = Hospital.get_by_id(int(session["admin"]))
+    responders = Responder.query(Responder.hospital == hospital.key).order(-Responder.created).fetch()
+    if responders != None:
+        responder_dict = []
+        for responder in responders:
+            responder_dict.append(responder.to_dict())
+    else:
+        responder_dict="Empty"
+
     if request.method == 'POST':
         data = request.get_json(force=True)
         if "responder_firstname" in data:
@@ -46,9 +56,9 @@ def responders():
         if "responder_middlename" in data:
             responder_middlename = data["responder_middlename"]
         if "responder_lastname" in data:
-            responder_lastname = data["responder_lastname"]    
-        hospital = Hospital.get_by_id(int(session("admin")))
-        responder = Responder.addResponder(hospital=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+            responder_lastname = data["responder_lastname"]   
+        hospital = Hospital.get_by_id(int(session["admin"]))
+        responder = Responder.addResponder(hospital_id=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
 
         if responder:
             return json_response({
@@ -60,14 +70,7 @@ def responders():
                 "add" : "failed",
                 "message":"Failed to add responder"
                 })  
-    hosp = Hospital.get_by_id(int(session("admin")))
-    responders = Responder.query(Responder.hospital == hosp.key).order(-Responder.created).fetch()
-    if responders != None:
-        responder_dict = []
-        for responder in responders:
-            responder_dict.append(responder.to_dict())
-    else:
-        responder_dict="Empty"
+    
 
     return render_template("responders.html",title="Responders",responders=responder_dict)
 
@@ -143,7 +146,7 @@ def signout():
 
 #for mobile user 
 
-@app.route("/alert",methods=["GET","POST"])
+@app.route("/alert",methods=["POST"])
 def alert():
     if request.method=='POST':
         data=request.get_json(force=True)
@@ -154,8 +157,13 @@ def alert():
         if "others" in data:
             report_others =data["others"]
 
-        report = Report.addReport(report_location=location,report_type=emergencyType,report_others=others)
-
+        report = Report.addReport(report_location=report_location,report_type=report_type,report_others=others)
+        pusher_client.trigger("hospital_channel","alert_event",
+            {
+                "report_location": report_location,
+                "report_type": report_type
+            }
+        )
         if report:
             return json_response({
                 "add_report" : "success",
@@ -166,13 +174,6 @@ def alert():
                 "add_report" : "failed",
                 "message":"Failed to send report"
                 })
-
-    pusher_client.trigger("hospital_channel","alert_event",
-            {
-                "emergencyLocation": "Mambaling CC",
-                "emergencyType": "Accident"
-            }
-        )
 
 @app.route("/signup/user",methods=["GET","POST"])
 def signup_user():
@@ -215,7 +216,12 @@ def signin_user():
         if user:
             return json_response({
                 "signin": "success",
-                "message" : "Sign in Success"
+                "message" : "Sign in Success",
+                "userid" : user.key.id(),
+                "user_firstname" : user.user_firstname,
+                "user_middlename" : user.user_middlename,
+                "user_lastname" : user.user_lastname,
+                "user_email" : user.user_email
                 })                  
         else:
             return json_response({

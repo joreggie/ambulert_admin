@@ -8,11 +8,10 @@
  
      var channel = pusher.subscribe('hospital_channel');
      channel.bind('alert_event', function(data) {
-       alert(JSON.stringify(data));
-
-       $('#location').text(data.emergencyLocation);
-       $('#emergency_type').text(data.emergencyType);
-       $('#reportModal').show();
+       console.log(JSON.stringify(data));
+       $('#location').text(data.report_location);
+       $('#emergency_type').text(data.report_type);
+       $('#reportModal').modal('show');
      });
 
 $(document).ready(function(){

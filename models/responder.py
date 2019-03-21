@@ -14,7 +14,7 @@ class Responder(ndb.Model):
             
         responder = cls()
 
-        hospital_id = str(kwargs.get('hospital_id'))
+        hospital_id = str(hospital_id)
         if hospital_id.isdigit():
             hospital_key = ndb.Key('Hospital',int(hospital_id))
             responder.hospital = hospital_key
@@ -31,6 +31,11 @@ class Responder(ndb.Model):
 
     def to_dict(self):
         data = {}
+        data['id'] = self.key.id()
+        data['hospital'] = None
+        if self.hospital:
+            hospital = self.hospital.get()
+            data['hospital'] = hospital.to_dict()
 
         data['responder_firstname'] = self.responder_firstname
         data['responder_middlename'] = self.responder_middlename

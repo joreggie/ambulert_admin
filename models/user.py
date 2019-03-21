@@ -1,6 +1,8 @@
 from google.appengine.ext import ndb
+from models.hospital import Hospital
 
 class User(ndb.Model):
+    hospital = ndb.KeyProperty(kind=Hospital)
     user_firstname = ndb.StringProperty()
     user_middlename= ndb.StringProperty()
     user_lastname= ndb.StringProperty()
@@ -39,3 +41,13 @@ class User(ndb.Model):
             user == None
 
         return user
+
+    def to_dict(self):
+        data = {}
+        
+        data['user_firstname'] = self.user_firstname
+        data['user_middlename'] = self.user_middlename
+        data['user_lastname'] = self.user_lastname
+        data['user_email'] = self.user_email
+        data['created'] = self.created.isoformat() + 'Z'
+        return data  

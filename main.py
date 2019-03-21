@@ -44,7 +44,7 @@ def responders():
     responders = Responder.query(Responder.hospital == hospital.key).order(-Responder.created).fetch()
     if responders != None:
         responder_dict = []
-        for responder in responders:
+        for responder in  responders:
             responder_dict.append(responder.to_dict())
     else:
         responder_dict="Empty"
@@ -77,7 +77,16 @@ def responders():
 @app.route("/users",methods=["GET","POST"])
 @login_required
 def users():
-    return render_template("users.html",title="Users")
+    hospital = Hospital.get_by_id(int(session["admin"]))
+    users = User.query(User.hospital == hospital.key).order(-User.created).fetch()
+    if users != None:
+        user_dict = []
+        for user in users:
+            user_dict.append(user.to_dict())
+    else:
+        user_dict="Empty"
+
+    return render_template("users.html",title="Users",users=user_dict)
 
 @app.route("/settings",methods=["GET","POST"])
 @login_required

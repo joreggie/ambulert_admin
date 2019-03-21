@@ -19,3 +19,9 @@ indexes:
   - name: hospital
   - name: created
     direction: desc
+
+- kind: User
+  properties:
+  - name: hospital
+  - name: created
+    direction: desc

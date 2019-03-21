@@ -25,50 +25,29 @@
 										<th>Lastname</th>
 										<th>Middlename</th>
 										<th>Email</th>
-										<th>Password</th>
 									</tr>
 								</thead>
 								<tbody>
+									{{users}}
+									{% if users %}
+										{% for u in users %}
+										<tr>
+											<td>{{ u.id }}</td>
+											<td>{{ u.user_firstname}}</td>
+											<td>{{ u.user_middlename}}</td>
+											<td>{{ u.user_lastname}}</td>
+											<td>{{ u.user_email}}</td>
+											<td>
+												<div class="btn btn-primary">Edit</div>
+												<div class="btn btn-danger">Delete</div>
+											</td>
+										</tr>
+										{% endfor %}
+									{% else %}
 									<tr>
-										<td>1</td>
-										<td>Joanna</td>
-										<td>Pasa</td>
-										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
-                                    </tr>
-                                    <tr>
-										<td>2</td>
-										<td>Joanna</td>
-										<td>Pasa</td>
-										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
-                                    </tr>
-                                    <tr>
-										<td>3</td>
-										<td>Joanna</td>
-										<td>Pasa</td>
-										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
-                                    </tr>
-                                    <tr>
-										<td>4</td>
-										<td>Joanna</td>
-										<td>Pasa</td>
-										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
-                                    </tr>
-                                    <tr>
-										<td>5</td>
-										<td>Joanna</td>
-										<td>Pasa</td>
-										<td>Mendoza</td>
-										<th>joan@gmail.com</th>
-										<th>123</th>
-                                    </tr>                                    
+										<td colspan="5" style="text-align:center"><p>No user found</p></td>
+									</tr>
+									{% endif %}                             
 								</tbody>
 							</table>
                           </div> <!-- /widget-content -->

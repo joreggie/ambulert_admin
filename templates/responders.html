@@ -7,7 +7,19 @@
 	<div class="main-inner">
 
 	    <div class="container">
-	
+					{% if request.args.get("all_fields")=="required" %}
+							<div class="alert alert-danger">
+								<p>All fields are <strong>required</strong></p>
+							</div>
+					{% elif request.args.get("add")=="success" %}
+							<div class="alert alert-success">
+								<p>{{request.args.get("message")}}</strong></p>
+							</div>
+					{% elif request.args.get("add")=="failed" %}
+							<div class="alert alert-danger">
+								<p>{{request.args.get("message")}}</strong></p>
+						 	</div>
+					{% endif %}
 	      
 			<div class="row">
 	      	
@@ -24,7 +36,6 @@
 							<!-- Modal -->
 							<div id="myModal" class="modal fade" role="dialog">
 									<div class="modal-dialog">
-								
 										<!-- Modal content-->
 										<div class="modal-content">
 											<div class="modal-header">
@@ -34,19 +45,6 @@
 											</h3>
 											</div>
 											<div class="modal-body">
-												{% if request.args.get("all_fields")=="required" %}
-													<div class="alert alert-danger">
-														<p>All fields are <strong>required</strong></p>
-													</div>
-												{% elif request.args.get("add")=="success" %}
-													<div class="alert alert-success">
-														<p>{{request.args.get("message")}}</strong></p>
-													</div>
-												{% elif request.args.get("add")=="failed" %}
-													<div class="alert alert-danger">
-														<p>{{request.args.get("message")}}</strong></p>
-													</div>
-												{% endif %}
 												<form method="POST">
 													<div class="form-group">
 														<input type="text" class="form-control" placeholder="Firstname" id="responder_firstname">
@@ -89,12 +87,15 @@
 												<td>{{ r.responder_firstname }}</td>
 												<td>{{ r.responder_middlename }}</td>
 												<td>{{ r.responder_lastname }}</td>
-												<td></td>
+												<td>
+													<a class="btn btn-primary" href="">Edit</a>
+													<a class="btn btn-danger" href="">Delete</a>
+												</td>
 											</tr>
 										{% endfor %}
 									{% else %}
 									<tr>
-										<td colspan="5"><p>No responder found</p></td>
+										<td colspan="5" style="text-align:center"><p class="text-center">No responder found</p></td>
 									</tr>
 									{% endif %}
 								</tbody>

@@ -14,6 +14,7 @@
        $('#reportModal').modal('show');
      });
 
+     
 $(document).ready(function(){
     var sendInfo={};
 
@@ -111,6 +112,30 @@ $(document).ready(function(){
             window.location.replace("/reports?all_fields=required");
         }
         e.preventDefault();
+    });
+
+    $(".accept").click(function(){
+        var id = $(this).data("id");
+
+        sendInfo={
+            report_id : id,
+            report_option : "accept"
+        };
+        console.log($('tr#'+id).find('.status').text());
+        var channel = pusher.subscribe('hospital_channel');
+            channel.bind('respond_event', function(data) {
+                $(this).closest('tr').find('status').text();
+                
+            });
+        });
+
+    $(".decline").click(function(){
+        var id = $(this).data("id");
+
+        sendInfo={
+            report_id : id,
+            report_option : "decline"
+        };
     });
 
 });

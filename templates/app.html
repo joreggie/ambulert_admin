@@ -29,7 +29,7 @@
                     class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </a><a class="brand text-center" href="index.html">Ambulert</a>
       <div class="nav-collapse">
         <ul class="nav pull-right">
-          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="padding">Account name</span><i
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="padding">{{hospital_name}}</span><i
                             class="icon-cog"></i><b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li class="white"><a href="/settings">Settings</a></li>
@@ -54,7 +54,7 @@
           <li class="{{ 'active' if active_page == 'dashboard' else '' }}"><a href="/dashboard"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
           <li class="{{ 'active' if active_page == 'reports' else '' }}"><a href="/reports"><i class="icon-file"></i><span>Reports</span> </a> </li>
           <li class="{{ 'active' if active_page == 'responders' else '' }}"><a href="/responders"><i class="icon-group"></i><span>Responders</span> </a></li>
-          <li class="{{ 'active' if active_page == 'users' else '' }}"><a href="/users"><i class="icon-user"></i><span>Users</span> </a> </li>
+          <li class="{{ 'active' if active_page == 'users' else '' }}"><a href="/users"><i class="icon-user"></i><span>Patients</span> </a> </li>
         </ul>
       </div>
       <!-- /container --> 

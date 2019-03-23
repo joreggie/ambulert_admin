@@ -29,12 +29,47 @@ pusher_client = pusher.Pusher(
 @app.route("/dashboard",methods=["GET","POST"])
 @login_required
 def index():
-    return render_template("index.html",title="Dashboard")
+    hospital = Hospital.get_by_id(int(session["admin"]))
+
+    return render_template("index.html",title="Dashboard",hospital_name=hospital.hospital_name)
 
 @app.route("/reports",methods=["GET","POST"])
 @login_required
 def reports():
-    return render_template("reports.html",title="Reports")
+    hospital = Hospital.get_by_id(int(session["admin"]))
+    reports = Report.query().fetch()
+    if reports != None:
+        report_dict = []
+        for report in  reports:
+            report_dict.append(report.to_dict())
+    else:
+        report_dict="Empty"
+
+    if request.method == "POST":
+        data =  request.get_json(force=True)
+        if 'report_id' in data:
+            report_id = data['report_id']
+        if 'report_option' in data:
+            report_option = data['report_option']
+        
+        if report_option == "accept":
+            report_status = report_option
+
+            pusher_client.trigger("hospital_channel","respond_event",
+                {
+                    "message": hospital.hospital_name + "has accepted your request for assistance."
+                }
+            )
+        elif report_option == "decline":
+            report_status = report_option
+
+            pusher_client.trigger("hospital_channel","respond_event",
+                {
+                    "message": hospital.hospital_name + "has declined your request for assistance."
+                }
+            )
+        report = Report.accept
+    return render_template("reports.html",title="Reports",reports=report_dict)
 
 @app.route("/responders",methods=["GET","POST"])
 @login_required
@@ -165,8 +200,8 @@ def alert():
             report_type =data["emergencyType"]
         if "others" in data:
             report_others =data["others"]
-
-        report = Report.addReport(report_location=report_location,report_type=report_type,report_others=others)
+        
+        report = Report.addReport(report_location=report_location,report_type=report_type,report_others=report_others,report_status="pending")
         pusher_client.trigger("hospital_channel","alert_event",
             {
                 "report_location": report_location,

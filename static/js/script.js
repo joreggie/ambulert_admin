@@ -115,19 +115,24 @@ $(document).ready(function(){
     });
 
     $(".accept").click(function(){
-        var id = $(this).data("id");
+        var btnAccept = $(this);
+        var id = btnAccept.data("id");
 
         sendInfo={
             report_id : id,
-            report_option : "accept"
+            report_option : "accepted"
         };
-        console.log($('tr#'+id).find('.status').text());
-        var channel = pusher.subscribe('hospital_channel');
-            channel.bind('respond_event', function(data) {
-                $(this).closest('tr').find('status').text();
-                
-            });
+        var channel = pusher.subscribe('repond_channel');
+        channel.bind('accept_event', function(data) {
+            btnAccept.closest('tr').children('td.status').text(data.status);
+            $('#acceptedMessage').text(data.message);
+            $('#acceptModal').modal('show');
+        }); 
+
+        $.post("/reports",JSON.stringify(sendInfo),function(response){
+            
         });
+     });
 
     $(".decline").click(function(){
         var id = $(this).data("id");

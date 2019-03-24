@@ -30,6 +30,18 @@ class Report(ndb.Model):
     
         report.put()
         return report
+
+    @classmethod
+    def updateReport(cls,report_id,report_status):
+
+        report = cls.get_by_id(int(report_id))
+
+        if report_status:
+            report.report_status = report_status
+
+        report.put()
+        return report
+
     
     @classmethod
     def getAccidentsCount(cls):

@@ -62,24 +62,30 @@ def reports():
             report_option = data['report_option']
         
         report = Report.get_by_id(int(report_id))
-        user = User.get_by_id(int(report.user))
-        if report_option == "accept":
+        user_id = report.user
+        user = User.get_by_id(int(user_id.id()))
+        if report_option == "accepted":
             report_status = report_option
-            Report.updateReport()
+            Report.updateReport(report_id,report_status)
+            pusher_client.trigger("repond_channel","accept_event",
+                {
+                    "report_status": "accepted",
+                    "message": "You have accepted" + user.user_firstname + "'s request for assistance"
+                }
+            )
             json_data = {
                 "to" : user.fcm_token,
                 "notification":{
                     "title" : "Hospital Response",
-                    "body" : hospital.hospital_name + "has accepted your request for assistance"
+                    "body" : hospital.hospital_name + " has accepted your request for assistance"
                 }
             }
             headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
+            
+        # elif report_option == "decline":
+        #     report_status = report_option
 
-        elif report_option == "decline":
-            report_status = report_option
-
-        report = Report.accept
 
         hospital = Hospital.get_by_id(int(session["admin"]))
     return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name)

@@ -5,13 +5,19 @@ class Report(ndb.Model):
     report_type = ndb.StringProperty()
     report_others = ndb.StringProperty()
     report_status = ndb.StringProperty()
+    user = ndb.KeyProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
-    def addReport(cls,report_location,report_type,report_others,report_status):
+    def addReport(cls,user_id,report_location,report_type,report_others,report_status):
             
         report = cls()
+
+        user_id = str(user_id)
+        if user_id.isdigit():
+            user_key = ndb.Key('User',int(user_id))
+            report.user = user_key
 
         if report_location:
             report.report_location = report_location
@@ -25,7 +31,56 @@ class Report(ndb.Model):
         report.put()
         return report
     
+    @classmethod
+    def getAccidentsCount(cls):
+
+        accidentCount=0
+        accidents = cls.query(cls.report_type=="Accident").fetch()
+
+        for a in accidents:
+            accidentCount = accidentCount + 1
+        
+        return accidentCount
     
+    @classmethod
+    def getPregnancyCount(cls):
+
+        pregnancyCount=0
+        pregnancy = cls.query(cls.report_type=="Pregnancy").fetch()
+
+        for p in pregnancy:
+            pregnancyCount = pregnancyCount + 1
+        
+        return pregnancyCount
+    
+    @classmethod
+    def getIllnessCount(cls):
+
+        illnessCount=0
+        illness = cls.query(cls.report_type=="Illness").fetch()
+
+        for i in illness:
+            illnessCount = illnessCount +1
+        
+        return illnessCount
+    @classmethod
+    def getRecentReports(cls):
+
+        count=0
+        limit=3
+        recentReports = []
+
+        reports = Report.query().order(-cls.created).fetch()
+
+        for r in reports:
+            if count != limit:
+                countAdded = r.to_dict()
+                countAdded["count"] =count
+                recentReports.append(countAdded)
+                count =count + 1
+
+        return recentReports
+        
 
     def to_dict(self):
         data = {}
@@ -36,3 +91,4 @@ class Report(ndb.Model):
         data['report_status'] = self.report_status
         data['created'] = self.created.isoformat() + "Z"
         return data
+        

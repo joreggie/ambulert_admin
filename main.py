@@ -6,6 +6,7 @@ from models.responder import Responder
 from models.report import Report
 from decorators import login_required
 import pusher
+import json
 
 # 
 import requests
@@ -14,6 +15,7 @@ from requests_toolbelt.adapters import appengine
 app = Flask(__name__)
 appengine.monkeypatch()
 app.secret_key = "dgkj4urf989398011k2pjd"
+app.config['FCM_APP_TOKEN'] = "AAAAVxwA4Zg:APA91bFz779TPyASpBPMa_gL94lRIC-yUaoTim8-bjC6nnFu4DkMoFAd9DljSj-nBQQE3b1UbHkdbxpRPpEzVEXC76el7Q-eDJ7k4K3KVum1pSfHRtuisuOO0Zi8DTCkZUO6ZQT2e0eu"
 
 # for admin website
 
@@ -31,7 +33,14 @@ pusher_client = pusher.Pusher(
 def index():
     hospital = Hospital.get_by_id(int(session["admin"]))
 
-    return render_template("index.html",title="Dashboard",hospital_name=hospital.hospital_name)
+    accidents = Report.getAccidentsCount()
+    pregnancy = Report.getPregnancyCount()
+    illness = Report.getIllnessCount()
+
+    recentReports = Report.getRecentReports()
+
+
+    return render_template("index.html",title="Dashboard",hospital_name=hospital.hospital_name,accidents=accidents,pregnancy=pregnancy,illness=illness,recentReports=recentReports)
 
 @app.route("/reports",methods=["GET","POST"])
 @login_required
@@ -52,24 +61,28 @@ def reports():
         if 'report_option' in data:
             report_option = data['report_option']
         
+        report = Report.get_by_id(int(report_id))
+        user = User.get_by_id(int(report.user))
         if report_option == "accept":
             report_status = report_option
-
-            pusher_client.trigger("hospital_channel","respond_event",
-                {
-                    "message": hospital.hospital_name + "has accepted your request for assistance."
+            Report.updateReport()
+            json_data = {
+                "to" : user.fcm_token,
+                "notification":{
+                    "title" : "Hospital Response",
+                    "body" : hospital.hospital_name + "has accepted your request for assistance"
                 }
-            )
+            }
+            headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
+            requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
+
         elif report_option == "decline":
             report_status = report_option
 
-            pusher_client.trigger("hospital_channel","respond_event",
-                {
-                    "message": hospital.hospital_name + "has declined your request for assistance."
-                }
-            )
         report = Report.accept
-    return render_template("reports.html",title="Reports",reports=report_dict)
+
+        hospital = Hospital.get_by_id(int(session["admin"]))
+    return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name)
 
 @app.route("/responders",methods=["GET","POST"])
 @login_required
@@ -107,7 +120,7 @@ def responders():
                 })  
     
 
-    return render_template("responders.html",title="Responders",responders=responder_dict)
+    return render_template("responders.html",title="Responders",responders=responder_dict,hospital_name=hospital.hospital_name)
 
 @app.route("/users",methods=["GET","POST"])
 @login_required
@@ -121,7 +134,7 @@ def users():
     else:
         user_dict="Empty"
 
-    return render_template("users.html",title="Users",users=user_dict)
+    return render_template("users.html",title="Users",users=user_dict,hospital_name=hospital.hospital_name)
 
 @app.route("/settings",methods=["GET","POST"])
 @login_required
@@ -194,6 +207,8 @@ def signout():
 def alert():
     if request.method=='POST':
         data=request.get_json(force=True)
+        if "userid" in data:
+            user = data["userid"]
         if "location" in data:
             report_location =data["location"]
         if "emergencyType" in data:
@@ -201,7 +216,7 @@ def alert():
         if "others" in data:
             report_others =data["others"]
         
-        report = Report.addReport(report_location=report_location,report_type=report_type,report_others=report_others,report_status="pending")
+        report = Report.addReport(user_id=user,report_location=report_location,report_type=report_type,report_others=report_others,report_status="pending")
         pusher_client.trigger("hospital_channel","alert_event",
             {
                 "report_location": report_location,
@@ -219,6 +234,28 @@ def alert():
                 "message":"Failed to send report"
                 })
 
+@app.route("/user-fcm",methods=["POST"])
+def fcm_token():
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        if 'userid' in data:
+            userid = data['userid']
+        if 'token' in data:
+            token = data['token']
+        
+        user = User.addToken(user_id=userid,token=token)
+
+        if user:
+            return json_response({
+                "add_token" : "success",
+                "message":"Successfully added token"
+                })
+        else:
+            return json_response({
+                "add_token" : "failed",
+                "message":"Failed to add token"
+                })
+
 @app.route("/signup/user",methods=["GET","POST"])
 def signup_user():
     if request.method == 'POST':
@@ -234,7 +271,7 @@ def signup_user():
         if "user_password" in data:
             user_password = data["user_password"]
 
-        user = User.addUser(user_firstname=user_firstname,user_middlename=user_middlename,user_lastname=user_lastname,user_email=user_email,user_password=user_password)
+        user = User.addUser(user_firstname=user_firstname,user_middlename=user_middlename,user_lastname=user_lastname,user_email=user_email,user_password=user_password,fcm_token="")
 
         if user:
             return json_response({

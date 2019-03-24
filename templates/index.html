@@ -17,13 +17,13 @@
                 <div class="widget-content">
                   <h6 class="bigstats">Emergencies of the day</h6>
                   <div id="big_stats" class="cf">
-                    <div class="stat"> <img src="/static/img/accident.png" alt="accident"><p>Accident</p><span class="value">851</span> </div>
+                    <div class="stat"> <img src="/static/img/accident.png" alt="accident"><p>Accident</p><span class="value">{{accidents}}</span> </div>
                     <!-- .stat -->
                     
-                    <div class="stat"> <img src="/static/img/pregnancy.png" alt="accident"><p>Pregnancy</p><span class="value">423</span> </div>
+                    <div class="stat"> <img src="/static/img/pregnancy.png" alt="pregnancy"><p>Pregnancy</p><span class="value">{{pregnancy}}</span> </div>
                     <!-- .stat -->
                     
-                    <div class="stat"> <img src="/static/img/illness.png" alt="accident"><p>Illness</p><span class="value">922</span> </div>
+                    <div class="stat"> <img src="/static/img/illness.png" alt="illness"><p>Illness</p><span class="value">{{illness}}</span> </div>
                     <!-- .stat -->
                   </div>
                 </div> 
@@ -42,40 +42,29 @@
             <div class="widget-header"> <i class="icon-file"></i>
               <h3>Recent Reports</h3>
             </div>
-            <div class="control-group">
-								<div class="controls">                          
-									 <div class="accordion" id="accordion2">
-                       <div class="accordion-group">
-                       <div class="accordion-heading">
-                       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                          Report Number 1
-                          <p class="pull-right">March 12, 2019 Tuesday 10:27am</p>
-                       </a>
-                       </div>
-                       <div id="collapseOne" class="accordion-body collapse in">
-                          <div class="accordion-inner">
-                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, numquam veritatis doloremque est placeat quisquam, quod corporis ea mollitia, eum repudiandae voluptatibus. Facilis, commodi et accusantium porro fugit sapiente minima?</p>
-                           </div>
-                       </div>
-                  </div>
-                  <div class="accordion-group">
-                    <div class="accordion-heading">
-                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-                          Report Number 2
-                          <p class="pull-right">March 12, 2019 Tuesday 10:27am</p>
-                      </a>
-                      
+            {% if recentReports %}
+              {% for r in recentReports %}
+                <div class="control-group">
+                    <div class="controls">                          
+                      <div class="accordion" id="accordion{{r.count}}">
+                          <div class="accordion-group">
+                          <div class="accordion-heading">
+                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{r.count}}" href="#collapse{{r.count}}">
+                              Report ID: {{r.id}}
+                              <p class="pull-right">{{r.created}}</p>
+                          </a>
+                          </div>
+                          <div id="collapse{{r.count}}" class="accordion-body collapse in">
+                              <div class="accordion-inner">
+                                  <p>Report Location: {{r.report_location}}</p>
+                              </div>
+                          </div>
+                      </div>
                     </div>
-                    <div id="collapseTwo" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam id assumenda perferendis commodi quod! Unde minima nesciunt, quidem vel perferendis quasi cum ex? Ab neque suscipit natus! Provident, aspernatur sequi?</p>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-							</div> <!-- /controls -->	
-						</div> <!-- /control-group -->
-                                            
+                  </div> <!-- /controls -->	
+                </div> <!-- /control-group -->
+              {% endfor %} 
+            {% endif %}            
 
             <!-- /widget-content --> 
           </div>

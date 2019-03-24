@@ -7,12 +7,13 @@ class User(ndb.Model):
     user_middlename= ndb.StringProperty()
     user_lastname= ndb.StringProperty()
     user_email= ndb.StringProperty()
+    fcm_token = ndb.StringProperty()
     user_password = ndb.StringProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
-    def addUser(cls,user_firstname,user_middlename,user_lastname,user_email,user_password):
+    def addUser(cls,user_firstname,user_middlename,user_lastname,user_email,user_password,fcm_token):
         
         user = cls()
 
@@ -25,10 +26,23 @@ class User(ndb.Model):
         if user_email:
             user.user_email = user_email
         if user_password:
-            user.user_password = user_password   
+            user.user_password = user_password
+        if fcm_token:
+            user.fcm_token = fcm_token   
 
         user.put()
         return user
+    
+    @classmethod 
+    def addToken(cls,user_id,token):
+
+        user = cls.get_by_id(int(user_id))
+
+        if token:
+            user.fcm_token = token
+
+        user.put()
+        return user 
     
     @classmethod 
     def signinUser(cls,user_email,user_password):

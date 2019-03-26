@@ -32,7 +32,19 @@ class User(ndb.Model):
 
         user.put()
         return user
-    
+    @classmethod
+    def updateHospitalUser(cls,user_id,hospital_id):
+
+        user = cls.get_by_id(int(user_id))
+
+        hospital_id = str(hospital_id)
+        if hospital_id.isdigit():
+            hospital_key = ndb.Key('Hospital',int(hospital_id))
+            user.hospital = hospital_key
+
+        user.put()
+        return user
+
     @classmethod 
     def addToken(cls,user_id,token):
 

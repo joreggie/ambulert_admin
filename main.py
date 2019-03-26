@@ -67,10 +67,12 @@ def reports():
         if report_option == "accepted":
             report_status = report_option
             Report.updateReport(report_id,report_status)
-            pusher_client.trigger("repond_channel","accept_event",
+            user_key = user.key.id()
+            User.updateHospitalUser(user_key,hospital.key.id())
+            pusher_client.trigger("accept_channel","accept_event",
                 {
                     "report_status": "accepted",
-                    "message": "You have accepted" + user.user_firstname + "'s request for assistance"
+                    "message": "You have accepted " + user.user_firstname + "'s request for assistance"
                 }
             )
             json_data = {
@@ -83,9 +85,24 @@ def reports():
             headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
             
-        # elif report_option == "decline":
-        #     report_status = report_option
-
+        elif report_option == "declined":
+            report_status = report_option
+            Report.updateReport(report_id,report_status)
+            pusher_client.trigger("decline_channel","decline_event",
+                {
+                    "report_status": "declined",
+                    "message": "You have declined " + user.user_firstname + "'s request for assistance"
+                }
+            )
+            json_data = {
+                "to" : user.fcm_token,
+                "notification":{
+                    "title" : "Hospital Response",
+                    "body" : hospital.hospital_name + " has declined your request for assistance"
+                }
+            }
+            headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
+            requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
 
         hospital = Hospital.get_by_id(int(session["admin"]))
     return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name)
@@ -105,26 +122,47 @@ def responders():
 
     if request.method == 'POST':
         data = request.get_json(force=True)
+        if "responder_id" in data:
+            responder_id = data["responder_id"]
         if "responder_firstname" in data:
             responder_firstname = data["responder_firstname"]
         if "responder_middlename" in data:
             responder_middlename = data["responder_middlename"]
         if "responder_lastname" in data:
-            responder_lastname = data["responder_lastname"]   
+            responder_lastname = data["responder_lastname"] 
+        if "responder_option" in data:
+            responder_option = data["responder_option"] 
+        
         hospital = Hospital.get_by_id(int(session["admin"]))
-        responder = Responder.addResponder(hospital_id=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+        if responder_option == "add":
+            responder = Responder.addResponder(hospital_id=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
 
-        if responder:
-            return json_response({
-                "add" : "success",
-                "message":"Successfully added responder"
-                })
-        else:
-            return json_response({
-                "add" : "failed",
-                "message":"Failed to add responder"
-                })  
-    
+            if responder:
+                return json_response({
+                    "add" : "success",
+                    "message":"Successfully added responder"
+                    })
+            else:
+                return json_response({
+                    "add" : "failed",
+                    "message":"Failed to add responder"
+                    })  
+        elif responder_option == "edit":
+            responder = Responder.updateResponder(responder_id=responder_id,responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+
+            if responder:
+                return json_response({
+                    "edit" : "success",
+                    "message":"Successfully edited responder"
+                    })
+            else:
+                return json_response({
+                    "edit" : "failed",
+                    "message":"Failed to edit responder"
+                    }) 
+        elif responder_option == "delete":
+            responder=Responder.get_by_id(int(responder_id))
+            responder.key.delete()
 
     return render_template("responders.html",title="Responders",responders=responder_dict,hospital_name=hospital.hospital_name)
 

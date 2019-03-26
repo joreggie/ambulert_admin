@@ -2,6 +2,32 @@
 {% set active_page = "reports" %}
 
 {% block content %}
+ <!-- neutral Modal -->  
+                <div  id="neutralModal" class="modal fade" role="dialog">
+									<div class="modal-dialog">
+								
+										<!-- Modal content-->
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">&times;</button>
+												<h3 class="modal-title" >
+                          <span id="titleModal"></span>
+											  </h3>
+											</div>
+											<div class="modal-body">
+												<p id="neutralMessage">
+
+                        </p>
+											</div>
+											<div class="modal-footer">
+                          <a href="" class="btn btn-primary">
+                              Okay
+                          </a>
+											</div>
+										</div>
+								
+									</div>
+								</div>
 <div class="main">
 	<div class="main-inner">
 
@@ -40,7 +66,7 @@
 											<td>{{ r.report_location }}</td>
 											<td>{{ r.report_others }}</td>
 											<td class='status'>{{ r.report_status }}</td>
-											<td><button class='btn btn-success accept' data-id='{{ r.id }}'>Accept</button><button class='btn btn-danger decline' data-id='{{ r.id }}'>Decline</button></td>
+											<td><button {% if r.report_status == "declined" or r.report_status== "accepted" %} disabled=disabled {% endif %}  class='btn btn-success accept' data-id='{{ r.id }}'>Accept</button><button {% if r.report_status == "declined" or r.report_status == "accepted"  %} disabled=disabled {% endif %} class='btn btn-danger decline' data-id='{{ r.id }}'>Decline</button></td>
 										</tr>
 									{% endfor %}
 									{% else %}

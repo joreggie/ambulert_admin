@@ -80,6 +80,8 @@ $(document).ready(function(){
             responder_firstname : firstname,
             responder_middlename : middlename,
             responder_lastname : lastname,
+            responder_option: "add"
+
         };
 
         if(firstname != "" && middlename != "" && lastname != ""){
@@ -91,6 +93,56 @@ $(document).ready(function(){
         }
         e.preventDefault();
     });
+    //Edit Responder
+    $("#btnEdit1Responder").click(function(e){
+        var id = $(this).data('responder-id');
+        $("#edit_responder_id").val($(this).closest('tr').children('td.responder_id').text());
+        $("#edit_responder_firstname").val($(this).closest('tr').children('td.responder_firstname').text());
+        $("#edit_responder_middlename").val($(this).closest('tr').children('td.responder_middlename').text());
+        $("#edit_responder_lastname").val($(this).closest('tr').children('td.responder_lastname').text());
+    });
+    
+    $("#btnEditResponder").click(function(e){
+        var id = $("#edit_responder_id").val().trim();
+        var firstname = $("#edit_responder_firstname").val();
+        var middlename = $("#edit_responder_middlename").val();
+        var lastname = $("#edit_responder_lastname").val();
+
+        sendInfo={
+            responder_id : id,
+            responder_firstname : firstname,
+            responder_middlename : middlename,
+            responder_lastname : lastname,
+            responder_option : "edit"
+        };
+
+        if(firstname != "" && middlename != "" && lastname != ""){
+             $.post("/responders",JSON.stringify(sendInfo),function(response){
+                window.location.replace("/responders?edit="+response["edit"]+"&message="+response["message"]);
+            });
+        }else{
+            window.location.replace("/responders?all_fields=required");
+        }
+        e.preventDefault();
+    });
+    //Delete Responder
+
+    $("#btnDeleteResponder").click(function(e){
+       if(confirm("Are you sure you want to delete?")){
+         var id = $(this).closest('tr').children('td.responder_id').text();
+         $(this).closest('tr').hide(1000);
+         
+         sendInfo={
+             responder_id : id,
+             responder_option: "delete"
+         }
+
+         $.post("/responders",JSON.stringify(sendInfo),function(response){
+         });
+       }
+        e.preventDefault();
+    });
+    
 
     //Add Report
     $("#btnSubmitReport").click(function(e){
@@ -122,11 +174,12 @@ $(document).ready(function(){
             report_id : id,
             report_option : "accepted"
         };
-        var channel = pusher.subscribe('repond_channel');
+        var channel = pusher.subscribe('accept_channel');
         channel.bind('accept_event', function(data) {
-            btnAccept.closest('tr').children('td.status').text(data.status);
-            $('#acceptedMessage').text(data.message);
-            $('#acceptModal').modal('show');
+            btnAccept.closest('tr').children('td.status').text(data.report_status);
+            $('#titleModal').text("Patient Accepted");
+            $('#neutralMessage').text(data.message);
+            $('#neutralModal').modal('show');
         }); 
 
         $.post("/reports",JSON.stringify(sendInfo),function(response){
@@ -135,12 +188,26 @@ $(document).ready(function(){
      });
 
     $(".decline").click(function(){
-        var id = $(this).data("id");
+        var btnDecline = $(this);
+        var id = btnDecline.data("id");
 
         sendInfo={
             report_id : id,
-            report_option : "decline"
+            report_option : "declined"
         };
+        var channel = pusher.subscribe('decline_channel');
+            channel.bind('decline_event', function(data) {
+                btnDecline.closest('tr').children('td.status').text(data.report_status);
+                $('#titleModal').text("Patient Declined");
+                $('#neutralMessage').text(data.message);
+                $('#neutralModal').modal('show');
+            }); 
+
+        $.post("/reports",JSON.stringify(sendInfo),function(response){
+                
+        });
     });
+
+        
 
 });

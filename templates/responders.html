@@ -19,6 +19,14 @@
 							<div class="alert alert-danger">
 								<p>{{request.args.get("message")}}</strong></p>
 						 	</div>
+					{% elif request.args.get("edit")=="success" %}
+							<div class="alert alert-success">
+								<p>{{request.args.get("message")}}</strong></p>
+							</div>
+					{% elif request.args.get("edit")=="failed" %}
+							<div class="alert alert-danger">
+								<p>{{request.args.get("message")}}</strong></p>
+						 	</div>
 					{% endif %}
 	      
 			<div class="row">
@@ -42,7 +50,7 @@
 												<button type="button" class="close" data-dismiss="modal">&times;</button>
 												<h3 class="modal-title" >
 														Add Responder
-											</h3>
+												</h3>
 											</div>
 											<div class="modal-body">
 												<form method="POST">
@@ -56,6 +64,38 @@
 															<input type="text" class="form-control" placeholder="Lastname" id="responder_lastname">
 														</div>
 														<button id="btnAddResponder" class="btn btn-primary pull-right">Add</button>
+												</form>
+											</div>
+											<div class="modal-footer">
+											</div>
+										</div>
+								
+									</div>
+								</div>
+								<div id="editModal" class="modal fade" role="dialog">
+									<div class="modal-dialog">
+										<!-- Modal content-->
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">&times;</button>
+												<h3 class="modal-title" >
+														Edit Responder
+												</h3>
+											</div>
+											<div class="modal-body">
+												<form method="POST">
+													<input type="hidden" class="form-control" id="edit_responder_id">
+													<div class="form-group">
+														<input type="text" class="form-control" placeholder="Firstname" id="edit_responder_firstname">
+													</div>
+													<div class="form-group">
+															<input type="text" class="form-control" placeholder="Middlename" id="edit_responder_middlename">
+													</div>
+													<div class="form-group">
+															<input type="text" class="form-control" placeholder="Lastname" id="edit_responder_lastname">
+														</div>
+														
+														<button id="btnEditResponder" class="btn btn-primary pull-right">Edit</button>
 												</form>
 											</div>
 											<div class="modal-footer">
@@ -83,13 +123,13 @@
 									{% if responders %}
 										{% for r in responders %}
 											<tr>
-												<td>{{ r.id }}</td>
-												<td>{{ r.responder_firstname }}</td>
-												<td>{{ r.responder_middlename }}</td>
-												<td>{{ r.responder_lastname }}</td>
+												<td class="responder_id">{{ r.id }}</td>
+												<td class="responder_firstname">{{ r.responder_firstname }}</td>
+												<td class="responder_middlename">{{ r.responder_middlename }}</td>
+												<td class="responder_lastname">{{ r.responder_lastname }}</td>
 												<td>
-													<a class="btn btn-primary" href="">Edit</a>
-													<a class="btn btn-danger" href="">Delete</a>
+													<a class="btn btn-primary" href="#editModal" data-toggle="modal" id="btnEdit1Responder">Edit</a>
+													<a class="btn btn-danger" id="btnDeleteResponder">Delete</a>
 												</td>
 											</tr>
 										{% endfor %}

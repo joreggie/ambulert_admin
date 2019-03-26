@@ -29,6 +29,20 @@ class Responder(ndb.Model):
         responder.put()
         return responder
 
+    @classmethod
+    def updateResponder(cls,responder_id,responder_firstname,responder_middlename,responder_lastname):
+
+        responder = cls.get_by_id(int(responder_id))
+        if responder_firstname:
+            responder.responder_firstname = responder_firstname
+        if responder_middlename:
+            responder.responder_middlename = responder_middlename
+        if responder_lastname:
+            responder.responder_lastname = responder_lastname
+
+        responder.put()
+        return responder
+
     def to_dict(self):
         data = {}
         data['id'] = self.key.id()

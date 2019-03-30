@@ -7,6 +7,7 @@ from models.report import Report
 from decorators import login_required
 import pusher
 import json
+import logging
 
 # 
 import requests
@@ -54,27 +55,33 @@ def reports():
     else:
         report_dict="Empty"
 
+    responders = Responder.query().fetch()
+    if responders != None:
+        responder_dict = []
+        for responder in  responders:
+            responder_dict.append(responder.dispatch())
+    else:
+        responder_dict="Empty"
+
     if request.method == "POST":
         data =  request.get_json(force=True)
         if 'report_id' in data:
             report_id = data['report_id']
         if 'report_option' in data:
             report_option = data['report_option']
+        if 'responder' in data:
+            responder = data['responder']
         
         report = Report.get_by_id(int(report_id))
         user_id = report.user
         user = User.get_by_id(int(user_id.id()))
         if report_option == "accepted":
             report_status = report_option
-            Report.updateReport(report_id,report_status)
+            Report.updateReport(report_id,report_status) #change report pending to accepter
             user_key = user.key.id()
             User.updateHospitalUser(user_key,hospital.key.id())
-            pusher_client.trigger("accept_channel","accept_event",
-                {
-                    "report_status": "accepted",
-                    "message": "You have accepted " + user.user_firstname + "'s request for assistance"
-                }
-            )
+            Responder.assignRescue(responder,report.key.id())
+            pusher_client.trigger("accept_channel","accept_event",{"report_status": "accepted"})
             json_data = {
                 "to" : user.fcm_token,
                 "notification":{
@@ -82,6 +89,7 @@ def reports():
                     "body" : hospital.hospital_name + " has accepted your request for assistance"
                 }
             }
+            logging.info(user.fcm_token)
             headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
             
@@ -105,7 +113,7 @@ def reports():
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
 
         hospital = Hospital.get_by_id(int(session["admin"]))
-    return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name)
+    return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name,responders=responder_dict)
 
 @app.route("/responders",methods=["GET","POST"])
 @login_required
@@ -135,7 +143,7 @@ def responders():
         
         hospital = Hospital.get_by_id(int(session["admin"]))
         if responder_option == "add":
-            responder = Responder.addResponder(hospital_id=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname)
+            responder = Responder.addResponder(hospital_id=hospital.key.id(),responder_firstname=responder_firstname,responder_middlename=responder_middlename,responder_lastname=responder_lastname,report_info="")
 
             if responder:
                 return json_response({
@@ -347,6 +355,33 @@ def signin_user():
                 "user_middlename" : user.user_middlename,
                 "user_lastname" : user.user_lastname,
                 "user_email" : user.user_email
+                })                  
+        else:
+            return json_response({
+                "signin" : "failed",
+                "message" : "Sign in failed"
+                })
+
+ #responder
+ #                
+@app.route("/signin/responder",methods=["POST"])
+def signin_responder():
+    if request.method == 'POST':
+        data = request.get_json(force=True)      
+
+        if "responder_id" in data:
+            responder_id = data["responder_id"]
+
+        responder = Responder.get_by_id(int(responder_id))
+
+        if responder:
+            return json_response({
+                "signin": "success",
+                "message" : "Sign in Success",
+                "responder_id" : responder.key.id(),
+                "responder_firstname" : responder.responder_firstname,
+                "responder_middlename" : responder.responder_middlename,
+                "responder_lastname" : responder.responder_lastname,
                 })                  
         else:
             return json_response({

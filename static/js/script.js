@@ -169,22 +169,9 @@ $(document).ready(function(){
     $(".accept").click(function(){
         var btnAccept = $(this);
         var id = btnAccept.data("id");
-
-        sendInfo={
-            report_id : id,
-            report_option : "accepted"
-        };
-        var channel = pusher.subscribe('accept_channel');
-        channel.bind('accept_event', function(data) {
-            btnAccept.closest('tr').children('td.status').text(data.report_status);
-            $('#titleModal').text("Patient Accepted");
-            $('#neutralMessage').text(data.message);
-            $('#neutralModal').modal('show');
-        }); 
-
-        $.post("/reports",JSON.stringify(sendInfo),function(response){
-            
-        });
+        $('#titleModal').text("Deploy Response Unit");
+        $('#reportid').val(id);
+        $('#neutralModal').modal('show');
      });
 
     $(".decline").click(function(){
@@ -206,6 +193,27 @@ $(document).ready(function(){
         $.post("/reports",JSON.stringify(sendInfo),function(response){
                 
         });
+    });
+
+    $(".dispatch").click(function(){
+        var reportid = $("#reportid").val();
+        var responder = $("#selectResponder").val();
+        sendInfo={
+            report_id : reportid,
+            report_option : "accepted",
+            responder : responder
+        };
+        
+        var channel = pusher.subscribe('accept_channel');
+            channel.bind('accept_event', function(data) {
+                $('tr#'+reportid).children('td.status').text(data.report_status);
+                $(".accept").attr("disabled","disabled");
+                $(".decline").attr("disabled","disabled");
+            });
+
+        $.post("/reports",JSON.stringify(sendInfo),function(response){
+        });
+
     });
 
         

@@ -6,11 +6,12 @@ class Responder(ndb.Model):
     responder_firstname = ndb.StringProperty()
     responder_middlename = ndb.StringProperty()
     responder_lastname = ndb.StringProperty()
+    report_info = ndb.KeyProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
 
     @classmethod
-    def addResponder(cls,hospital_id,responder_firstname,responder_middlename,responder_lastname):
+    def addResponder(cls,hospital_id,responder_firstname,responder_middlename,responder_lastname,report_info):
             
         responder = cls()
 
@@ -25,7 +26,22 @@ class Responder(ndb.Model):
             responder.responder_middlename = responder_middlename
         if responder_lastname:
             responder.responder_lastname = responder_lastname
-    
+        if report_info:
+            responder.report_info = report_info
+
+        responder.put()
+        return responder
+
+    @classmethod
+    def assignRescue(cls,responder_id,report_info):
+
+        responder = cls.get_by_id(int(responder_id))
+
+        report_id = str(report_info)
+        if report_id.isdigit():
+            report_key = ndb.Key('Report',int(report_id))
+            responder.report_info = report_key
+
         responder.put()
         return responder
 
@@ -42,6 +58,14 @@ class Responder(ndb.Model):
 
         responder.put()
         return responder
+
+    def dispatch(self):
+        data = {}
+        data['id'] = self.key.id()
+        data['responder_firstname'] = self.responder_firstname
+        data['responder_lastname'] = self.responder_lastname
+        data['created'] = self.created.isoformat() + 'Z'
+        return data
 
     def to_dict(self):
         data = {}

@@ -14,16 +14,26 @@
                           <span id="titleModal"></span>
 											  </h3>
 											</div>
-											<div class="modal-body">
-												<p id="neutralMessage">
-
-                        </p>
-											</div>
-											<div class="modal-footer">
-                          <a href="" class="btn btn-primary">
-                              Okay
-                          </a>
-											</div>
+											<form method="POST">
+												<div class="modal-body">
+													<input type="hidden" id="reportid">
+													<div class="form-group">
+														<label for="selectResponder">Select responder to dispatch</label>
+														<select name="selectResponder" id="selectResponder" class="form-control">
+															{% if responders %}
+																{% for responder in responders %}
+																	<option value="{{responder.id}}">{{responder.responder_firstname}} {{responder.responder_lastname}}</option>
+																{% endfor %}
+															{% endif %}
+														</select>
+													</div>
+												</div>
+												<div class="modal-footer">
+														<button data-dismiss="modal" class="btn btn-primary dispatch">
+																Dispatch
+														</button>
+												</div>
+											</form>
 										</div>
 								
 									</div>
@@ -39,6 +49,12 @@
 	      	<div class="">
 	      		
 	      		<div class="widget">
+						
+						{% if request.args.get("dispatch")=="success" %}
+							<div class="alert alert-success">
+								<p>{{request.args.get("message")}}</p>
+							</div>
+						{% endif %}
 						
 					<div class="widget-header">
 						<i class="icon-user"></i>
@@ -60,7 +76,7 @@
 							<tbody>
 								{% if reports %}
 									{% for r in reports %}
-										<tr data-id="{{ r.id }}">
+										<tr id="{{ r.id }}">
 											<td>{{ r.id }}</td>
 											<td>{{ r.report_type }}</td>
 											<td>{{ r.report_location }}</td>

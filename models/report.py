@@ -103,4 +103,9 @@ class Report(ndb.Model):
         data['report_status'] = self.report_status
         data['created'] = self.created.isoformat() + "Z"
         return data
-        
+
+    def report_dict(self):
+        data = {}
+        data['report_location'] = self.report_location
+        data['report_type'] = self.report_type 
+        data['created'] = self.created.isoformat() + "Z"

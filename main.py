@@ -255,6 +255,27 @@ def signout():
 
 #for mobile user 
 
+@app.route("/user/reports",methods=["GET","POST"])
+def user_reports():
+
+    if request.method == "POST":
+        data=request.get_json(force=True)
+        if "userid" in data:
+            userid = data["userid"] 
+        user = User.get_by_id(int(userid))
+        user_reports = Report.query(Report.user == user.key).order(-Report.created).fetch()
+        if user_reports != None:
+            report_dict = []
+            for user_report in  user_reports:
+                report_dict.append(user_report.to_dict())
+            
+            return json_response({
+                "user_reports" : report_dict
+            })
+        else:
+            report_dict="Empty"
+
+
 @app.route("/alert",methods=["POST"])
 def alert():
     if request.method=='POST':
@@ -362,8 +383,7 @@ def signin_user():
                 "message" : "Sign in failed"
                 })
 
- #responder
- #                
+ #responder               
 @app.route("/signin/responder",methods=["POST"])
 def signin_responder():
     if request.method == 'POST':

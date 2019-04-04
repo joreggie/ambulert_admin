@@ -14,6 +14,12 @@ indexes:
   - name: hospital_email
   - name: hospital_password
 
+- kind: Report
+  properties:
+  - name: user
+  - name: created
+    direction: desc
+
 - kind: Responder
   properties:
   - name: hospital

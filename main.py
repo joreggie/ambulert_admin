@@ -275,6 +275,17 @@ def user_reports():
         else:
             report_dict="Empty"
 
+@app.route("/hospitals",methods=["GET"])
+def hospitals():
+    hospitals = Hospital.query().order(-Hospital.created).fetch()
+    if hospitals != None:
+        hospital_dict = []
+        for hospital in  hospitals:
+            hospital_dict.append(hospital.to_dict())
+            
+        return json_response({
+            "hospitals" : hospital_dict
+        })
 
 @app.route("/alert",methods=["POST"])
 def alert():

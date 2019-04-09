@@ -287,6 +287,18 @@ def hospitals():
             "hospitals" : hospital_dict
         })
 
+@app.route("/location",methods=["GET"])
+@login_required
+def location():
+    hospital = Hospital.get_by_id(int(session["admin"]))
+    reports = Report.query().fetch()
+    if reports != None:
+        report_dict = []
+        for report in  reports:
+            report_dict.append(report.to_dict())
+    else:
+        report_dict="Empty"        
+
 @app.route("/alert",methods=["POST"])
 def alert():
     if request.method=='POST':

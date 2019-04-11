@@ -46,6 +46,18 @@ class Responder(ndb.Model):
         return responder
 
     @classmethod
+    def getReportInfo(cls, responder_id):
+
+        report_info = None
+
+        if responder_id:
+            responder = cls.get_by_id(int(responder_id))
+            if responder:
+                report_info = responder.report_details()
+        
+        return report_info
+
+    @classmethod
     def updateResponder(cls,responder_id,responder_firstname,responder_middlename,responder_lastname):
 
         responder = cls.get_by_id(int(responder_id))
@@ -67,6 +79,16 @@ class Responder(ndb.Model):
         data['created'] = self.created.isoformat() + 'Z'
         return data
 
+    def report_details(self):
+        data = {}
+
+        data['report_info'] = None
+        if self.report_info:
+            report = self.report_info.get()
+            data['report_info'] = report.to_dict()
+
+        return data
+
     def to_dict(self):
         data = {}
         data['id'] = self.key.id()
@@ -74,6 +96,11 @@ class Responder(ndb.Model):
         if self.hospital:
             hospital = self.hospital.get()
             data['hospital'] = hospital.to_dict()
+
+        data['report_info'] = None
+        if self.report_info:
+            report = self.report_info.get()
+            data['report_info'] = report.to_dict()
 
         data['responder_firstname'] = self.responder_firstname
         data['responder_middlename'] = self.responder_middlename

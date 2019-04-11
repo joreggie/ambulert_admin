@@ -80,7 +80,7 @@ def reports():
             Report.updateReport(report_id,report_status) #change report pending to accepter
             user_key = user.key.id()
             User.updateHospitalUser(user_key,hospital.key.id())
-            Responder.assignRescue(responder,report.key.id())
+            Responder.assignRescue(responder_id=responder,report_info=report.key.id())
             pusher_client.trigger("accept_channel","accept_event",{"report_status": "accepted"})
             json_data = {
                 "to" : user.fcm_token,
@@ -273,7 +273,9 @@ def user_reports():
                 "user_reports" : report_dict
             })
         else:
-            report_dict="Empty"
+            return json_response({
+                "user_reports" : "Empty"
+            })
 
 @app.route("/hospitals",methods=["GET"])
 def hospitals():
@@ -287,17 +289,23 @@ def hospitals():
             "hospitals" : hospital_dict
         })
 
-@app.route("/location",methods=["GET"])
-@login_required
-def location():
-    hospital = Hospital.get_by_id(int(session["admin"]))
-    reports = Report.query().fetch()
-    if reports != None:
-        report_dict = []
-        for report in  reports:
-            report_dict.append(report.to_dict())
-    else:
-        report_dict="Empty"        
+@app.route("/responder/reports",methods=["GET","POST"])
+def responder_report():
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        if "responder_id" in data:
+            responder_id = data["responder_id"]
+
+        report_info = Responder.getReportInfo(responder_id)
+        if report_info:
+            return json_response({
+                "report_info" : report_info
+                })
+        else:
+            return json_response({
+                "report_info" : "Empty"
+                })
+
 
 @app.route("/alert",methods=["POST"])
 def alert():

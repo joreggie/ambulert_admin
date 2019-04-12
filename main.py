@@ -188,11 +188,6 @@ def users():
 
     return render_template("users.html",title="Users",users=user_dict,hospital_name=hospital.hospital_name)
 
-@app.route("/settings",methods=["GET","POST"])
-@login_required
-def settings():
-    return render_template("settings.html",title="Settings")
-
 @app.route("/signin",methods=["GET","POST"])
 def signin():
     if request.method == 'POST':

@@ -53,7 +53,7 @@ class Responder(ndb.Model):
         if responder_id:
             responder = cls.get_by_id(int(responder_id))
             if responder:
-                report_info = responder.report_details()
+                report_info = responder.to_dict()
         
         return report_info
 
@@ -77,16 +77,6 @@ class Responder(ndb.Model):
         data['responder_firstname'] = self.responder_firstname
         data['responder_lastname'] = self.responder_lastname
         data['created'] = self.created.isoformat() + 'Z'
-        return data
-
-    def report_details(self):
-        data = {}
-
-        data['report_info'] = None
-        if self.report_info:
-            report = self.report_info.get()
-            data['report_info'] = report.to_dict()
-
         return data
 
     def to_dict(self):

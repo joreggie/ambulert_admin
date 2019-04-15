@@ -3,6 +3,9 @@
 
 {% block content %}
  <!-- neutral Modal -->  
+	{% if hospital %}
+	<input type="hidden" value="{{hospital}}" id="hospitalID">
+	{% endif %}
                 <div  id="neutralModal" class="modal fade" role="dialog">
 									<div class="modal-dialog">
 								

@@ -92,7 +92,7 @@ def reports():
             pusher_client.trigger("dispatch_channel","dispatch_event",
                 {
                     "dispatch_status": "dispatched",
-                    "hospital_name" : hospital.hospital_name,
+                    "hospital_name" : hospital.key.id(),
                     "message": hospital.hospital_name + " has accepted " + user.user_firstname +" "+ user.user_lastname + " request."
                 }
             )
@@ -121,7 +121,7 @@ def reports():
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))
 
         hospital = Hospital.get_by_id(int(session["admin"]))
-    return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name,responders=responder_dict)
+    return render_template("reports.html",title="Reports",reports=report_dict,hospital_name=hospital.hospital_name,responders=responder_dict,hospital=session['admin'])
 
 @app.route("/responders",methods=["GET","POST"])
 @login_required

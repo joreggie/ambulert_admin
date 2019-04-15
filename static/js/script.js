@@ -14,10 +14,7 @@
        $('#reportModal').modal('show');
      });
 
-     var channel = pusher.subscribe('dispatch_channel');
-     channel.bind('dispatch_event', function(data) {
-        //  if(data["hospital_name"] == )
-     });
+     
 
      
 $(document).ready(function(){
@@ -216,7 +213,17 @@ $(document).ready(function(){
                 $(".decline").attr("disabled","disabled");
             });
 
+            
+
         $.post("/reports",JSON.stringify(sendInfo),function(response){
+            var ca = pusher.subscribe('dispatch_channel');
+            ca.bind('dispatch_event', function(data) {
+               hospitalID = $("#hospitalID");
+                if(data["hospital_name"] != hospitalID )
+                {
+                    console.log(data['message']);
+                }
+            });
         });
 
     });

@@ -89,6 +89,14 @@ def reports():
                     "body" : hospital.hospital_name + " has accepted your request for assistance"
                 }
             }
+            pusher_client.trigger("dispatch_channel","dispatch_event",
+                {
+                    "dispatch_status": "dispatched",
+                    "hospital_name" : hospital.hospital_name,
+                    "message": hospital.hospital_name + " has accepted " + user.user_firstname +" "+ user.user_lastname + " request."
+                }
+            )
+            
             logging.info(user.fcm_token)
             headers = {"content-type":"application/json","Authorization":"key=" + app.config["FCM_APP_TOKEN"]}
             requests.post("https://fcm.googleapis.com/fcm/send",headers=headers,data=json.dumps(json_data))

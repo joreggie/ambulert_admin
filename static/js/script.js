@@ -14,6 +14,11 @@
        $('#reportModal').modal('show');
      });
 
+     var channel = pusher.subscribe('dispatch_channel');
+     channel.bind('dispatch_event', function(data) {
+        //  if(data["hospital_name"] == )
+     });
+
      
 $(document).ready(function(){
     var sendInfo={};

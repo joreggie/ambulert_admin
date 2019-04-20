@@ -417,6 +417,35 @@ def signin_user():
                 "message" : "Sign in failed"
                 })
 
+@app.route("/profile",methods=['POST'])
+def profile():
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        if "user_id" in data:
+            user_id = data["user_id"]
+        if "user_firstname" in data:
+            user_firstname = data["user_firstname"]
+        if "user_middlename" in data:
+            user_middlename = data["user_middlename"]
+        if "user_lastname" in data:
+            user_lastname = data["user_lastname"]
+        if "user_email" in data:
+            user_email = data["user_email"]
+
+        user = User.updateProfile(user_id=user_id,user_firstname=user_firstname,user_middlename=user_middlename,user_lastname=user_lastname,user_email=user_email)
+
+        if user:
+            return json_response({
+                "profile" : "updated",
+                "message" : "Profile successfully updated."
+            })
+        else:
+            return json_response({
+                "profile" : "failed",
+                "message" : "Failed to update profile."
+            })
+
+
  #responder               
 @app.route("/signin/responder",methods=["POST"])
 def signin_responder():

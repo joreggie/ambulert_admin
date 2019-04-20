@@ -45,6 +45,23 @@ class User(ndb.Model):
         user.put()
         return user
 
+    @classmethod
+    def updateProfile(cls,user_id,user_firstname,user_middlename,user_lastname,user_email):
+
+        user = cls.get_by_id(int(user_id))
+
+        if user_firstname:
+            user.user_firstname = user_firstname
+        if user_middlename:
+            user.user_middlename = user_middlename
+        if user_lastname:
+            user.user_lastname = user_lastname
+        if user_email:
+            user.user_email = user_email
+
+        user.put()
+        return user
+
     @classmethod 
     def addToken(cls,user_id,token):
 

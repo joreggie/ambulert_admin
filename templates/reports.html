@@ -72,6 +72,7 @@
 									<th>Type</th>
 									<th>Location</th>
 									<th>Message</th>
+									<th>Image</th>
 									<th>Status</th>
 									<th>Action</th>
 								</tr>
@@ -84,6 +85,7 @@
 											<td>{{ r.report_type }}</td>
 											<td>{{ r.report_location }}</td>
 											<td>{{ r.report_others }}</td>
+											<td><img  class="img-responsive img-thumbnail" width="100px" height="100px" src="{{ r.report_image }}" alt=""></td>
 											<td class='status'>{{ r.report_status }}</td>
 											<td><button {% if r.report_status == "declined" or r.report_status== "accepted" %} disabled=disabled {% endif %}  class='btn btn-success accept' data-id='{{ r.id }}'>Accept</button><button {% if r.report_status == "declined" or r.report_status == "accepted"  %} disabled=disabled {% endif %} class='btn btn-danger decline' data-id='{{ r.id }}'>Decline</button></td>
 										</tr>

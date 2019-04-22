@@ -322,8 +322,10 @@ def alert():
             report_type =data["emergencyType"]
         if "others" in data:
             report_others =data["others"]
+        if 'image' in data:
+            report_image = data['image']
         
-        report = Report.addReport(user_id=user,report_location=report_location,report_type=report_type,report_others=report_others,report_status="pending")
+        report = Report.addReport(user_id=user,report_image=report_image,report_location=report_location,report_type=report_type,report_others=report_others,report_status="pending")
         pusher_client.trigger("hospital_channel","alert_event",
             {
                 "report_location": report_location,

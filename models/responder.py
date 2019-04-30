@@ -76,6 +76,7 @@ class Responder(ndb.Model):
         data['id'] = self.key.id()
         data['responder_firstname'] = self.responder_firstname
         data['responder_lastname'] = self.responder_lastname
+        data['report_info'] = self.report_info
         data['created'] = self.created.isoformat() + 'Z'
         return data
 

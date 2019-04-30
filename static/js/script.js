@@ -209,8 +209,10 @@ $(document).ready(function(){
         var channel = pusher.subscribe('accept_channel');
             channel.bind('accept_event', function(data) {
                 $('tr#'+reportid).children('td.status').text(data.report_status);
-                $(".accept").attr("disabled","disabled");
-                $(".decline").attr("disabled","disabled");
+                $('tr#'+reportid).children('td.action').find(".accept").attr("disabled","disabled");
+                $('tr#'+reportid).children('td.action').find(".decline").attr("disabled","disabled");
+                // $(".accept").attr("disabled","disabled");
+                // $(".decline").attr("disabled","disabled");
             });
 
             

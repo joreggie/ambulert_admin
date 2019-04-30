@@ -266,7 +266,7 @@ def user_reports():
         if "userid" in data:
             userid = data["userid"] 
         user = User.get_by_id(int(userid))
-        user_reports = Report.query(Report.user == user.key).order(-Report.created).fetch()
+        user_reports = Report.query(Report.user == user.key).order().fetch()
         if user_reports != None:
             report_dict = []
             for user_report in  user_reports:

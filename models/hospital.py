@@ -31,7 +31,14 @@ class Hospital(ndb.Model):
 
         hospital.put()
         return hospital
-    
+    @classmethod
+    def registeredHospital(cls,hospital_name):
+        hospital = None
+        if hospital_name:
+            hospital = cls.query(cls.hospital_name == hospital_name).get()
+
+        return hospital
+
     @classmethod 
     def signinHospital(cls,hospital_email,hospital_password):
         admin = None
@@ -40,7 +47,7 @@ class Hospital(ndb.Model):
             admin = cls.query(cls.hospital_email == hospital_email, cls.hospital_password != None).get()
 
         if admin and not pbkdf2_sha256.verify(hospital_password, admin.hospital_password):
-            admin = NoneS
+            admin = None
 
         return admin
 

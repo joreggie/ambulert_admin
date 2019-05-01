@@ -236,17 +236,25 @@ def signup():
         if "hospital_type" in data:
             hospital_type = data["hospital_type"]
 
-        hospital = Hospital.addHospital(hospital_name=hospital_name,hospital_address=hospital_address,hospital_email=hospital_email,hospital_contact=hospital_contact,hospital_password=hospital_password,hospital_type=hospital_type)
-
-        if hospital:
-            return json_response({
-                "signup" : "success",
-                "message":"Successfully signed up"
-                })
+        hospital = registeredHospital(hospital_name)
+        #first trap
+        if hospital is None:
+            # if none result, register
+            hospital = Hospital.addHospital(hospital_name=hospital_name,hospital_address=hospital_address,hospital_email=hospital_email,hospital_contact=hospital_contact,hospital_password=hospital_password,hospital_type=hospital_type)
+            if hospital:
+                 return json_response({
+                    "signup" : "success",
+                    "message":"Successfully signed up"
+                    })
+            else: 
+                return json_response({
+                    "signup" : "failed",
+                    "message":"Failed to sign up" 
+                    })
         else:
             return json_response({
                 "signup" : "failed",
-                "message":"Failed to sign up"
+                "message":"Entered duplicate hospital name"
                 })
             
     return render_template("signup.html",title="Sign up")
@@ -473,6 +481,22 @@ def signin_responder():
                 "signin" : "failed",
                 "message" : "Sign in failed"
                 })
+@app.route("/responder/completion",methods=["POST"])
+def responder_completion():
+
+    if request.method == "POST":
+        data=request.get_json(force=True)
+        if "responder_id" in data:
+            responderid = data["responder_id"] 
+
+        responder = Responder.get_by_id(int(responder_id))
+        if responder_id:
+            responder.report_info == None
+            responder.put()
+
+        return json_response({
+            "message" : "You have successfully completed the task." 
+        })
 
 #for errors on admin website
 

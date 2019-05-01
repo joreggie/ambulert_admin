@@ -19,7 +19,8 @@
 			<div class="alert alert-success">
 				<p>{{request.args.get("message")}}</strong></p>
 			</div>
-		{% elif request.args.get("signup")=="failed" %}
+		{% endif %}	
+		{% if request.args.get("signup")=="failed" %}
 		<div class="alert alert-danger">
 				<p>{{request.args.get("message")}}</strong></p>
 			</div>

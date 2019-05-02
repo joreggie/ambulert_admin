@@ -236,7 +236,8 @@ def signup():
         if "hospital_type" in data:
             hospital_type = data["hospital_type"]
 
-        hospital = registeredHospital(hospital_name)
+        hospital = Hospital.registeredHospital(hospital_name)
+        
         #first trap
         if hospital is None:
             # if none result, register
@@ -253,7 +254,7 @@ def signup():
                     })
         else:
             return json_response({
-                "signup" : "failed",
+                "signup" : "duplicated",
                 "message":"Entered duplicate hospital name"
                 })
             

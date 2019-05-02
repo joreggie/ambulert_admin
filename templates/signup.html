@@ -25,6 +25,11 @@
 				<p>{{request.args.get("message")}}</strong></p>
 			</div>
 		{% endif %}
+		{% if request.args.get("signup")=="duplicated" %}
+		<div class="alert alert-danger">
+				<p>{{request.args.get("message")}}</strong></p>
+			</div>
+		{% endif %}
 		<form method="POST">
 		
 			<h1>Sign up</h1>			
@@ -48,16 +53,14 @@
 						<option value="Chong Hua Hospital (Fuente Osmeña Circle)">Chong Hua Hospital (Fuente Osmeña Circle)</option>
 						<option value="Chong Hua Hospital Transvaginal Ultrasound">Chong Hua Hospital Transvaginal Ultrasound</option>
 						<option value="Chong Hua Medical Arts Center">Chong Hua Medical Arts Center</option>
-						<option value="Dr. Ignacio M. Cortes General Hospital, Inc.">Dr. Ignacio M. Cortes General Hospital, Inc.</option>
 						<option value="Perpetual Succour Hospital Outpatient Clinic">Perpetual Succour Hospital Outpatient Clinic</option>				
 						<option value="Perpetual Succour Hospital">Perpetual Succour Hospital</option>
 						<option value="Pulmonary Function Laboratory - Chong Hua Hospital">Pulmonary Function Laboratory - Chong Hua Hospital</option>
 						<option value="Sacred Heart Hospital">Sacred Heart Hospital</option>
 						<option value="St. Anthony Mother & Child Hospital">St. Anthony Mother & Child Hospital</option>
 						<option value="St. Vincent General Hospital">St. Vincent General Hospital</option>
-						<option value="University of Cebu Medical Center">University of Cebu Medical Center</option>
 						<option value="Vicente Gullas Memorial Hospital">Vicente Gullas Memorial Hospital</option>
-						<option value="Vicente Sotto Memorial Medical">Vicente Sotto Memorial Medical</option>		
+						<option value="Vicente Sotto Memorial Medical Center">Vicente Sotto Memorial Medical</option>		
 					</select>
 				</div> <!-- /field -->
 				

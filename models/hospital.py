@@ -31,6 +31,7 @@ class Hospital(ndb.Model):
 
         hospital.put()
         return hospital
+        
     @classmethod
     def registeredHospital(cls,hospital_name):
         hospital = None
